@@ -59,6 +59,7 @@ class FieldViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
                 array(
                     'property' => $propertyName,
                     'id' => 'rad.'.$propertyName,
+					'class' => 'span6'
                 )
             )
         );
@@ -74,7 +75,8 @@ class FieldViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
                     'property' => $propertyName,
                     'id' => 'rad.'.$propertyName,
                     'options' => $options,
-                    'sortByOptionLabel' => true
+                    'sortByOptionLabel' => true,
+					'class' => 'span6'
                 )
             )
          );
@@ -82,7 +84,7 @@ class FieldViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
     }
 
     protected function rowTemplate($fieldName,$fieldHtml) {
-        return '<dt><label for="rad.'.$fieldName.'">'.$fieldName.':</label></dt><dd>'.$fieldHtml.'</dd>';
+        return '<div class="control-group"><label for="rad.'.$fieldName.'">'.$fieldName.':</label><div class="controls">'.$fieldHtml.'</div></div>';
     }
 
     protected function callViewHelper($name, $arguments) {
