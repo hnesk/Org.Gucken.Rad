@@ -32,11 +32,6 @@ class FieldViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
      * @return string
      */
     protected function render($property = null,$propertyValue = null, $propertyName = '') {
-        if (\is_null($propertyValue)) {
-            $propertyName = $property;
-            $propertyValue = $this->getPropertyValue($property);            
-        }
-
         if (\is_object($propertyValue)) {           
             $repository = $this->repositoryReflectionService->getRepositoryFor($propertyValue);
             if ($repository) {
