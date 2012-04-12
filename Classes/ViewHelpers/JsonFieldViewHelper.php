@@ -13,14 +13,17 @@ class JsonFieldViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	 * @param boolean $forceOutput
 	 */
 	protected function render($key, $forceOutput = false) {
+
+		$fieldName = 'fields'.JsonArrayViewHelper::$nesting;
+
 		$parentClass = 'Org\Gucken\Rad\ViewHelpers\JsonArrayViewHelper';
-		$fields = $this->viewHelperVariableContainer->get($parentClass, 'fields');
+		$fields = $this->viewHelperVariableContainer->get($parentClass, $fieldName);
 		$output = $this->renderChildren();
 		if ($output || $forceOutput) {
 			$fields[$key] = $output;
 		}
-		$this->viewHelperVariableContainer->remove($parentClass, 'fields');
-		$this->viewHelperVariableContainer->add($parentClass, 'fields', $fields);
+		$this->viewHelperVariableContainer->remove($parentClass, $fieldName);
+		$this->viewHelperVariableContainer->add($parentClass, $fieldName, $fields);
 	}
 
 }
