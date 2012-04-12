@@ -76,13 +76,16 @@ class RowViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 		if (!$this->isObjectAccessorMode()) {
 			return new \TYPO3\FLOW3\Error\Result();
 		}
-		$originalRequestMappingResults = $this->controllerContext->getRequest()->getOriginalRequestMappingResults();
+		$validationResults = $this->controllerContext->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
+		if ($validationResults === NULL) {
+			return new \TYPO3\FLOW3\Error\Result();
+		}
 
 		if ($isPropertyBoundToForm) {
 			$formObjectName = $this->viewHelperVariableContainer->get('TYPO3\Fluid\ViewHelpers\FormViewHelper', 'formObjectName');
-			return $originalRequestMappingResults->forProperty($formObjectName)->forProperty($property);
+			return $validationResults->forProperty($formObjectName)->forProperty($property);
 		} else {
-			return $originalRequestMappingResults->forProperty($property);
+			return $validationResults->forProperty($property);
 		}
 
 	}
