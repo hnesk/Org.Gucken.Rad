@@ -1,0 +1,14 @@
+{
+    "name": "org/gucken-rad",
+    "type": "typo3-flow-package",
+    "description": "ViewHelpers that can build a form for any object, with the posibility to iteratively improve the rendering",
+    "version": "0.1.0",
+    "require": {
+        "typo3/flow": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Org\\Gucken\\Rad": "Classes"
+        }
+    }
+}
