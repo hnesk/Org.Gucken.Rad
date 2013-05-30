@@ -2,17 +2,17 @@
 
 namespace Org\Gucken\Rad\ViewHelpers;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class RowViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 *
-	 * @var \TYPO3\FLOW3\I18n\Translator
-	 * @FLOW3\Inject
+	 * @var \TYPO3\Flow\I18n\Translator
+	 * @Flow\Inject
 	 */
 	protected $translator;
 
@@ -46,7 +46,7 @@ class RowViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 		$errorString = '';
 		foreach ($problems as $error) {
-				/* @var $error \TYPO3\FLOW3\Error\Error */
+				/* @var $error \TYPO3\Flow\Error\Error */
 				try {
 					$errorMessage = $this->translator->translateById($error->getCode(), $error->getArguments(), NULL, NULL, 'ValidationErrors', 'Org.Gucken.Bielefeld');
 				} catch (\Exception $e) {
@@ -70,15 +70,15 @@ class RowViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 	 * Get errors for the property and form name of this view helper
 	 * @param $property string
 	 * @param $isPropertyBoundToForm boolean
-	 * @return array<\TYPO3\FLOW3\Error\Error> Array of errors
+	 * @return array<\TYPO3\Flow\Error\Error> Array of errors
 	 */
 	protected function getMappingResultsForProperty($property, $isPropertyBoundToForm = true) {
 		if (!$this->isObjectAccessorMode()) {
-			return new \TYPO3\FLOW3\Error\Result();
+			return new \TYPO3\Flow\Error\Result();
 		}
 		$validationResults = $this->controllerContext->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
 		if ($validationResults === NULL) {
-			return new \TYPO3\FLOW3\Error\Result();
+			return new \TYPO3\Flow\Error\Result();
 		}
 
 		if ($isPropertyBoundToForm) {

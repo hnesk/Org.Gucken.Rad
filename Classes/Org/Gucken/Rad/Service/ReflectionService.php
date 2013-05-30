@@ -2,29 +2,29 @@
 
 namespace Org\Gucken\Rad\Service;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 
 class ReflectionService {
     
     
     /**
-     * @FLOW3\Inject
-     * @var \TYPO3\FLOW3\Reflection\ReflectionService
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Reflection\ReflectionService
      */
     protected $fieldReflectionService;
 
 
     /**
-     * @FLOW3\Inject
-     * @var \TYPO3\FLOW3\Object\ObjectManager
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Object\ObjectManager
      */
     protected $objectManager;
 
     /**
      * 
      * @param Object|string The class to lookup the repository for
-     * @return \TYPO3\FLOW3\Persistence\Repository
+     * @return \TYPO3\Flow\Persistence\Repository
      */
     public function getRepositoryFor($object) {
         $propertyClass = is_object($object) ? \get_class($object) : $object;

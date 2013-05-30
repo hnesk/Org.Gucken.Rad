@@ -1,7 +1,7 @@
 <?php
 namespace Org\Gucken\Rad\ViewHelpers;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
  */

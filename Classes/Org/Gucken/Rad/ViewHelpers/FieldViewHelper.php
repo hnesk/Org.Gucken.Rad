@@ -2,23 +2,23 @@
 
 namespace Org\Gucken\Rad\ViewHelpers;
 
-use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\Flow\Annotations as Flow;
 
 /**
- * @FLOW3\Scope("prototype")
+ * @Flow\Scope("prototype")
  */
 class FieldViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
     
     /**
-     * @FLOW3\Inject
+     * @Flow\Inject
      * @var Org\Gucken\Rad\Service\ReflectionService
      */
     protected $repositoryReflectionService;
 
     /**
-     * @FLOW3\Inject
-     * @var \TYPO3\FLOW3\Object\ObjectManager
+     * @Flow\Inject
+     * @var \TYPO3\Flow\Object\ObjectManager
      */
     protected $objectManager;
     
@@ -100,7 +100,7 @@ class FieldViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
     protected function getPropertyValue($propertyName) {
 
         $formObject = $this->viewHelperVariableContainer->get('Org\Gucken\Rad\ViewHelpers\FieldsViewHelper', 'fieldsObject');
-        return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($formObject, $propertyName);
+        return \TYPO3\Flow\Reflection\ObjectAccess::getPropertyPath($formObject, $propertyName);
     }
 
 }
