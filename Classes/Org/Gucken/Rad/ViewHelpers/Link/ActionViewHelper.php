@@ -3,6 +3,7 @@ namespace Org\Gucken\Rad\ViewHelpers\Link;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Fluid\Core\ViewHelper\TagBuilder;
+use TYPO3\Fluid\Core\ViewHelper;
 use TYPO3\Fluid\ViewHelpers\Link\ActionViewHelper as OriginalActionViewHelper;
 
 /*                                                                        *
@@ -79,12 +80,22 @@ class ActionViewHelper extends OriginalActionViewHelper {
      * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @return string The rendered link
+     * @param bool $useParentRequest
+     * @param bool $absolute
      * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+     * @return string The rendered link
      * @api
      */
-	public function render($action, $arguments = array(), $controller = NULL, $package = NULL, $subpackage = NULL, $section = '', $format = '',  array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
-		$uriBuilder = $this->controllerContext->getUriBuilder();
+    public function render($action, $arguments = array(), $controller = NULL, $package = NULL, $subpackage = NULL, $section = '', $format = '',  array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = FALSE, $absolute = true) {
+        $uriBuilder = $this->controllerContext->getUriBuilder();
+        if ($useParentRequest) {
+            $request = $this->controllerContext->getRequest();
+            if ($request->isMainRequest()) {
+                throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1360163536);
+            }
+            $uriBuilder = clone $uriBuilder;
+            $uriBuilder->setRequest($request->getParentRequest());
+        }
         $attributes = $this->tag->getAttributes();
         foreach ($attributes as $attributeName => $dummy) {
             $this->tag->removeAttribute($attributeName);
@@ -93,7 +104,7 @@ class ActionViewHelper extends OriginalActionViewHelper {
 			$uri = $uriBuilder
 				->reset()
 				->setSection($section)
-				->setCreateAbsoluteUri(TRUE)
+				->setCreateAbsoluteUri($absolute)
 				->setArguments($additionalParams)
 				->setAddQueryString($addQueryString)
 				->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
