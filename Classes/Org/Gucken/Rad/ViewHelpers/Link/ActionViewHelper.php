@@ -1,29 +1,18 @@
 <?php
 namespace Org\Gucken\Rad\ViewHelpers\Link;
 
-use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Fluid\Core\ViewHelper\TagBuilder;
-use TYPO3\Fluid\Core\ViewHelper;
 use TYPO3\Fluid\ViewHelpers\Link\ActionViewHelper as OriginalActionViewHelper;
-
-/*                                                                        *
- * This script belongs to the TYPO3 Flow package "Fluid".                 *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License, either version 3   *
- * of the License, or (at your option) any later version.                 *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+use TYPO3\Fluid\Core\ViewHelper;
+use TYPO3\Flow\Annotations as Flow;
 
 
 /**
- * A view helper for creating links to actions.
+ * A view helper for creating links to unsafe actions via a form
  *
  * = Examples =
  *
  * <code title="Defaults">
- * <f:link.action>some link</f:link.action>
+ * <r:link.action>some link</r:link.action>
  * </code>
  * <output>
  * <a href="currentpackage/currentcontroller">some link</a>
@@ -31,7 +20,7 @@ use TYPO3\Fluid\ViewHelpers\Link\ActionViewHelper as OriginalActionViewHelper;
  * </output>
  *
  * <code title="Additional arguments">
- * <f:link.action action="myAction" controller="MyController" package="YourCompanyName.MyPackage" subpackage="YourCompanyName.MySubpackage" arguments="{key1: 'value1', key2: 'value2'}">some link</f:link.action>
+ * <r:link.action action="myAction" controller="MyController" package="YourCompanyName.MyPackage" subpackage="YourCompanyName.MySubpackage" arguments="{key1: 'value1', key2: 'value2'}">some link</r:link.action>
  * </code>
  * <output>
  * <a href="mypackage/mycontroller/mysubpackage/myaction?key1=value1&amp;key2=value2">some link</a>
@@ -80,13 +69,13 @@ class ActionViewHelper extends OriginalActionViewHelper {
      * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
      * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param bool $useParentRequest
-     * @param bool $absolute
-     * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
+	 * @param boolean $useParentRequest If set, the parent Request will be used instead of the current one
+	 * @param boolean $absolute By default this ViewHelper renders links with absolute URIs. If this is FALSE, a relative URI is created instead
      * @return string The rendered link
+	 * @throws ViewHelper\Exception
      * @api
      */
-    public function render($action, $arguments = array(), $controller = NULL, $package = NULL, $subpackage = NULL, $section = '', $format = '',  array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = FALSE, $absolute = true) {
+	public function render($action, $arguments = array(), $controller = NULL, $package = NULL, $subpackage = NULL, $section = '', $format = '',  array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array(), $useParentRequest = FALSE, $absolute = TRUE) {
         $uriBuilder = $this->controllerContext->getUriBuilder();
         if ($useParentRequest) {
             $request = $this->controllerContext->getRequest();
@@ -96,26 +85,23 @@ class ActionViewHelper extends OriginalActionViewHelper {
             $uriBuilder = clone $uriBuilder;
             $uriBuilder->setRequest($request->getParentRequest());
         }
-        $attributes = $this->tag->getAttributes();
-        foreach ($attributes as $attributeName => $dummy) {
-            $this->tag->removeAttribute($attributeName);
-        }
+
+        $uri = $uriBuilder
+            ->reset()
+            ->setSection($section)
+            ->setCreateAbsoluteUri($absolute)
+            ->setArguments($additionalParams)
+            ->setAddQueryString($addQueryString)
+            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
+            ->setFormat($format);
 		try {
-			$uri = $uriBuilder
-				->reset()
-				->setSection($section)
-				->setCreateAbsoluteUri($absolute)
-				->setArguments($additionalParams)
-				->setAddQueryString($addQueryString)
-				->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-				->setFormat($format)
-				->uriFor($action, $arguments, $controller, $package, $subpackage);
-			$this->tag->addAttribute('action', $uri);
-            $this->tag->addAttribute('method', 'post');
-            $this->tag->addAttribute('class', 'postlink');
-		} catch (\TYPO3\Flow\Exception $exception) {
-			throw new \TYPO3\Fluid\Core\ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
+			$uri = $uriBuilder->uriFor($action, $arguments, $controller, $package, $subpackage);
+		} catch (\Exception $exception) {
+			throw new ViewHelper\Exception($exception->getMessage(), $exception->getCode(), $exception);
 		}
+        $this->tag->addAttribute('action', $uri);
+        $this->tag->addAttribute('method', 'post');
+        $this->tag->addAttribute('class', 'postlink');
 
 		$this->tag->setContent(
             '<div style="display: none">'.
@@ -133,7 +119,7 @@ class ActionViewHelper extends OriginalActionViewHelper {
      * @return string
      */
     protected function renderSubmit($attributes = array()) {
-        $formTag = new TagBuilder('button', $this->renderChildren());
+        $formTag = new ViewHelper\TagBuilder('button', $this->renderChildren());
         $formTag->addAttribute('type','submit');
         $formTag->addAttributes($attributes);
         $formTag->forceClosingTag(TRUE);
@@ -155,6 +141,3 @@ class ActionViewHelper extends OriginalActionViewHelper {
     }
 
 }
-
-
-?>
