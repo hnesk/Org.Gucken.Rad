@@ -20,7 +20,7 @@ use TYPO3\Flow\Annotations as Flow;
  * </output>
  *
  * <code title="Additional arguments">
- * <r:link.action action="myAction" controller="MyController" package="YourCompanyName.MyPackage" subpackage="YourCompanyName.MySubpackage" arguments="{key1: 'value1', key2: 'value2'}">some link</r:link.action>
+ * <r:link.action action="myAction" controller="MyController" package="YourCompanyName.MyPackage" subpackage="YourCompanyName.MySubpackage" arguments="{key1: 'value1', key2: 'value2'}">some link</f:link.action>
  * </code>
  * <output>
  * <a href="mypackage/mycontroller/mysubpackage/myaction?key1=value1&amp;key2=value2">some link</a>
@@ -85,8 +85,11 @@ class ActionViewHelper extends OriginalActionViewHelper {
             $uriBuilder = clone $uriBuilder;
             $uriBuilder->setRequest($request->getParentRequest());
         }
-
-        $uri = $uriBuilder
+        $attributes = $this->tag->getAttributes();
+        foreach ($attributes as $attributeName => $dummy) {
+            $this->tag->removeAttribute($attributeName);
+        }
+        $uriBuilder
             ->reset()
             ->setSection($section)
             ->setCreateAbsoluteUri($absolute)
